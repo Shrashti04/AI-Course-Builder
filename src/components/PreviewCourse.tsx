@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Download, FileText, ChevronLeft, ChevronRight, GripVertical } from 'lucide-react';
+import { Download, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Course } from '../types/course';
 import { pdfExportService } from '../services/pdfExport';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface PreviewCourseProps {
   course: Course;
@@ -10,7 +9,7 @@ interface PreviewCourseProps {
 
 export const PreviewCourse: React.FC<PreviewCourseProps> = ({ course }) => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [slides, setSlides] = useState(course.slides);
+  const [slides] = useState(course.slides); // Remove setSlides, slides are now static
   const currentSlide = slides[currentSlideIndex];
 
   const nextSlide = () => {
@@ -19,31 +18,6 @@ export const PreviewCourse: React.FC<PreviewCourseProps> = ({ course }) => {
 
   const prevSlide = () => {
     setCurrentSlideIndex(prev => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const handleDragEnd = (result: any) => {
-    if (!result.destination) return;
-
-    const newSlides = Array.from(slides);
-    const [reorderedItem] = newSlides.splice(result.source.index, 1);
-    newSlides.splice(result.destination.index, 0, reorderedItem);
-
-    // Update order property
-    const updatedSlides = newSlides.map((slide, index) => ({
-      ...slide,
-      order: index + 1
-    }));
-
-    setSlides(updatedSlides);
-    
-    // Update current slide index if needed
-    if (result.source.index === currentSlideIndex) {
-      setCurrentSlideIndex(result.destination.index);
-    } else if (result.source.index < currentSlideIndex && result.destination.index >= currentSlideIndex) {
-      setCurrentSlideIndex(currentSlideIndex - 1);
-    } else if (result.source.index > currentSlideIndex && result.destination.index <= currentSlideIndex) {
-      setCurrentSlideIndex(currentSlideIndex + 1);
-    }
   };
 
   const exportAsHTML = () => {
@@ -61,8 +35,7 @@ export const PreviewCourse: React.FC<PreviewCourseProps> = ({ course }) => {
 
   const exportAsPDF = () => {
     try {
-      const updatedCourse = { ...course, slides };
-      pdfExportService.exportCourseToPDF(updatedCourse);
+      pdfExportService.exportCourseToPDF(course);
     } catch (error) {
       console.error('Failed to export PDF:', error);
       alert('Failed to export PDF. Please try again.');
@@ -139,57 +112,34 @@ export const PreviewCourse: React.FC<PreviewCourseProps> = ({ course }) => {
         </div>
       </div>
 
-      {/* Slide Thumbnails */}
+      {/* Slide Thumbnails
       <div className="mt-8">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">All Slides</h3>
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="slides">
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-              >
-                {slides.map((slide, index) => (
-                  <Draggable key={slide.id} draggableId={slide.id} index={index}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        onClick={() => setCurrentSlideIndex(index)}
-                        className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                          index === currentSlideIndex
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                        } ${snapshot.isDragging ? 'shadow-lg transform rotate-2' : ''}`}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-gray-900 mb-1">
-                              Slide {index + 1}: {slide.type.charAt(0).toUpperCase() + slide.type.slice(1)}
-                            </div>
-                            <div className="text-sm text-gray-600 truncate">
-                              {slide.content.title || slide.title}
-                            </div>
-                          </div>
-                          <div
-                            {...provided.dragHandleProps}
-                            className="ml-2 p-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
-                            title="Drag to reorder"
-                          >
-                            <GripVertical className="w-4 h-4" />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {slides.map((slide, index) => (
+            <div
+              key={slide.id}
+              onClick={() => setCurrentSlideIndex(index)}
+              className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                index === currentSlideIndex
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-gray-900 mb-1">
+                    Slide {index + 1}: {slide.type.charAt(0).toUpperCase() + slide.type.slice(1)}
+                  </div>
+                  <div className="text-sm text-gray-600 truncate">
+                    {slide.content.title || slide.title}
+                  </div>
+                </div>
               </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </div>
+            </div>
+          ))}
+        </div>
+      </div> */}
     </div>
   );
 };
