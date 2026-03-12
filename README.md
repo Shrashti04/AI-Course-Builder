@@ -288,34 +288,6 @@ This project is opinionated in a few ways:
 - users should always be able to override AI output
 - the workflow should feel simple enough for non-technical users
 
-## Current Limitations
-
-This is a prototype and there are clear areas for improvement:
-
-- AI calls are made directly from the frontend
-- API keys should not remain frontend-exposed in production
-- there is no backend for auditing, caching, rate limiting, or retry control
-- there is no database persistence
-- generated courses are not saved across sessions
-- there is no authentication or multi-user support
-- error handling is basic and mostly UI alerts / console logging
-- there is no automated test suite yet
-- initial generation is sequential, which can increase latency
-- some dependencies may be leftover from earlier iterations
-
-## Production Improvements
-
-If this project were taken further, the next steps would likely be:
-
-- move AI calls behind a secure backend
-- store generated courses in a database
-- add user authentication and saved history
-- add schema validation for AI responses
-- improve retry and fallback logic for model errors
-- support richer templates and themes
-- add collaboration or sharing workflows
-- add unit and integration tests
-
 ## Who This Project Is For
 
 This project is a good fit for:
@@ -325,19 +297,6 @@ This project is a good fit for:
 - founders prototyping learning products
 - content creators building quick course drafts
 - recruiters or interviewers reviewing AI-assisted product work
-
-## Interview-Friendly Summary
-
-If you need a short explanation of the project:
-
-> AI Course Builder is a frontend application that uses Mistral to generate structured learning slides from a topic. Users choose the course structure, review AI-generated content, edit or regenerate slides, and export the final course as HTML or PDF. The project focuses on using AI as a drafting assistant while keeping human judgment in control.
-
-## Notes for Contributors
-
-- Keep the course model typed and explicit
-- Prefer structured AI responses over free-form text
-- Avoid mixing UI logic and model-calling logic in the same component
-- If the AI provider changes again, rename `src/services/geminiApi.ts` to reflect the active provider
 
 ## License
 
