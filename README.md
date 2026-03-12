@@ -35,6 +35,54 @@ The application is organized around a simple 3-step workflow:
 - Export as HTML
 - Export as PDF
 
+## Architecture Diagram
+
+```mermaid
+flowchart TD
+    U[User] --> H[Header Navigation]
+    H --> A[App.tsx]
+
+    A --> C[CreateCourse.tsx]
+    A --> E[EditCourse.tsx]
+    A --> P[PreviewCourse.tsx]
+    A --> L[LoadingSpinner.tsx]
+
+    C --> T[templates.ts]
+    C --> G[AI Service<br/>geminiApi.ts]
+    E --> S[SlideEditor.tsx]
+    E --> T
+    E --> G
+    P --> PDF[PDF Export Service<br/>pdfExport.ts]
+    P --> HTML[HTML Export Builder]
+
+    A --> M[Course State]
+    M --> CT[course.ts types]
+
+    G --> API[Mistral API]
+
+    PDF --> OUT1[PDF File]
+    HTML --> OUT2[HTML File]
+```
+
+## User Flow Diagram
+
+```mermaid
+flowchart LR
+    Start([Start]) --> Topic[Enter topic]
+    Topic --> Count[Choose slide count]
+    Count --> Types[Select slide types]
+    Types --> Generate[Generate with AI]
+    Generate --> Review[Review generated slides]
+    Review --> Edit[Edit manually]
+    Review --> Regen[Regenerate slide]
+    Edit --> Preview[Preview final course]
+    Regen --> Preview
+    Preview --> ExportHTML[Export HTML]
+    Preview --> ExportPDF[Export PDF]
+    ExportHTML --> End([Done])
+    ExportPDF --> End
+```
+
 ## Demo Flow
 
 The current product experience works like this:
@@ -90,6 +138,7 @@ At a high level:
 
 ```text
 .
+├── .bolt/
 ├── src/
 │   ├── components/
 │   │   ├── CreateCourse.tsx
@@ -168,10 +217,6 @@ The AI service:
 - asks for JSON output
 - parses the returned JSON string
 - maps that data into the course model used by the UI
-
-### Important implementation note
-
-The service file is still named `geminiApi.ts`, but the current implementation uses Mistral. This is a naming leftover from an earlier provider iteration and does not affect functionality.
 
 ### Prompting strategy
 
