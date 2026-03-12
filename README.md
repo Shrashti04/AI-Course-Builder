@@ -90,7 +90,6 @@ At a high level:
 
 ```text
 .
-├── .bolt/
 ├── src/
 │   ├── components/
 │   │   ├── CreateCourse.tsx
